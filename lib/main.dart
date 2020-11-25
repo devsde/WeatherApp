@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -40,6 +41,9 @@ class _WeatherAppState extends State<WeatherApp> {
     await fetchLocation();
     await fetchLocationDay();
   }
+
+  @override
+  void dispose() {}
 
   fetchSearch(String input) async {
     try {
@@ -99,30 +103,40 @@ class _WeatherAppState extends State<WeatherApp> {
     }
   }
 
+  AudioPlayer advancedPlayerTh = new AudioPlayer();
+  AudioPlayer advancedPlayerHr = new AudioPlayer();
+  AudioPlayer advancedPlayerLr = new AudioPlayer();
+  AudioPlayer advancedPlayerSh = new AudioPlayer();
+
   void soundEffects() {
     print(weather);
     if (sound) {
       if (weather == "thunderstorm" || weather == "heavycloud") {
-        final player = AudioCache();
-        player.play('thunderstorm.wav');
+        AudioCache playerTsHc = new AudioCache(fixedPlayer: advancedPlayerTh);
+
+        playerTsHc.play('thunderstorm.wav');
       }
       if (weather == "lightrain") {
-        final player = AudioCache();
-        player.play('lightrain.wav');
+        final playerLr = AudioCache(fixedPlayer: advancedPlayerLr);
+        playerLr.play('lightrain.wav');
       }
 
       if (weather == "heavyrain") {
-        final player = AudioCache();
-        player.play('heavyrain.wav');
+        final playerHr = AudioCache(fixedPlayer: advancedPlayerHr);
+        playerHr.play('heavyrain.wav');
       }
       if (weather == "showers") {
-        final player = AudioCache();
-        player.play('showers.mp3');
+        final playerShowers = AudioCache(fixedPlayer: advancedPlayerSh);
+        playerShowers.play('showers.mp3');
       }
     }
   }
 
   void onTextFieldSubmitted(String input) async {
+    advancedPlayerTh.stop();
+    advancedPlayerHr.stop();
+    advancedPlayerLr.stop();
+    advancedPlayerSh.stop();
     await fetchSearch(input);
     await fetchLocation();
     await fetchLocationDay();
